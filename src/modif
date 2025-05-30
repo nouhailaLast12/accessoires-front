@@ -1,0 +1,60 @@
+import React, { useEffect, useRef } from 'react';
+import { Gantt } from 'frappe-gantt';  // تأكد من استيراد مكتبة frappe-gantt
+
+// البيانات الخاصة بالمهام مع التبعيات والمدة الزمنية
+const tasks = [
+  { id: 'A', name: 'Create GitLab repository and initialize the project (React, PHP)', start: '2025-01-01', end: '2025-01-01', duration: 1, dependencies: [] },
+  { id: 'B', name: 'Configure MySQL database (connection, create basic tables)', start: '2025-01-02', end: '2025-01-03', duration: 2, dependencies: ['A'] },
+  { id: 'C', name: 'Set up REST API architecture with PHP (routes, controllers, models)', start: '2025-01-04', end: '2025-01-05', duration: 2, dependencies: ['B'] },
+  { id: 'D', name: 'Install Bootstrap to improve design', start: '2025-01-01', end: '2025-01-01', duration: 1, dependencies: ['A'] },
+  { id: 'E', name: 'Define backlog with all key features on Jira', start: '2025-01-01', end: '2025-01-01', duration: 1, dependencies: ['A'] },
+  { id: 'F', name: 'Create the dishes table in MySQL', start: '2025-01-03', end: '2025-01-03', duration: 1, dependencies: ['B'] },
+  { id: 'G', name: 'Develop PHP API to retrieve the list of dishes', start: '2025-01-06', end: '2025-01-07', duration: 2, dependencies: ['F', 'C'] },
+  { id: 'H', name: 'Create React component to display the menu', start: '2025-01-08', end: '2025-01-09', duration: 2, dependencies: ['G'] },
+  { id: 'I', name: 'Add style to the Menu page using Bootstrap', start: '2025-01-09', end: '2025-01-09', duration: 1, dependencies: ['H', 'D'] },
+  { id: 'J', name: 'Test and validate the retrieval of dishes from the database', start: '2025-01-09', end: '2025-01-09', duration: 1, dependencies: ['G', 'H'] },
+  { id: 'K', name: 'Create reservations table in MySQL', start: '2025-01-03', end: '2025-01-03', duration: 1, dependencies: ['B'] },
+  { id: 'L', name: 'Develop PHP API to manage reservations (CRUD)', start: '2025-01-04', end: '2025-01-05', duration: 2, dependencies: ['K', 'C'] },
+  { id: 'M', name: 'Create React component to display reservations', start: '2025-01-07', end: '2025-01-08', duration: 2, dependencies: ['L'] },
+  { id: 'N', name: 'Create React component to add reservation with a form', start: '2025-01-08', end: '2025-01-09', duration: 2, dependencies: ['M'] },
+  { id: 'O', name: 'Test integration between React and PHP/MySQL', start: '2025-01-09', end: '2025-01-09', duration: 1, dependencies: ['L', 'M', 'N'] },
+  { id: 'P', name: 'Create reviews table in MySQL', start: '2025-01-03', end: '2025-01-03', duration: 1, dependencies: ['B'] },
+  { id: 'Q', name: 'Develop PHP API to manage reviews (CRUD)', start: '2025-01-04', end: '2025-01-05', duration: 2, dependencies: ['P', 'C'] },
+  { id: 'R', name: 'Create React component for reviews', start: '2025-01-09', end: '2025-01-10', duration: 2, dependencies: ['Q'] },
+  { id: 'S', name: 'Create form to add review (Add, Edit, Delete)', start: '2025-01-10', end: '2025-01-11', duration: 2, dependencies: ['R'] },
+  { id: 'T', name: 'Optimize design and UI/UX with Bootstrap', start: '2025-01-04', end: '2025-01-05', duration: 2, dependencies: ['L', 'C'] },
+  { id: 'U', name: 'Fix bugs and improve performance', start: '2025-01-12', end: '2025-01-13', duration: 2, dependencies: ['J', 'O', 'S'] },
+  { id: 'V', name: 'Conduct unit and integration tests (API and Front-end)', start: '2025-01-14', end: '2025-01-16', duration: 3, dependencies: ['U'] },
+  { id: 'W', name: 'Prepare technical documentation', start: '2025-01-17', end: '2025-01-19', duration: 3, dependencies: ['V'] },
+  { id: 'X', name: 'Deploy project (backend + frontend hosting)', start: '2025-01-20', end: '2025-01-21', duration: 2, dependencies: ['W'] }
+];
+
+const GanttChartComponent = () => {
+  const ganttContainer = useRef(null);
+
+  useEffect(() => {
+    const gantt = new Gantt(ganttContainer.current, tasks, {
+      // خيارات التخصيص للمخطط
+      view_mode: 'Day',
+      date_format: 'YYYY-MM-DD',
+      language: 'en', // اللغة
+      on_click: (task) => {
+        console.log(task);
+      },
+      on_date_change: (task, newStart, newEnd) => {
+        console.log(task, newStart, newEnd);
+      },
+    });
+
+    gantt.render();
+  }, []);
+
+  return (
+    <div>
+      <h1>Gantt Chart - Project Phases</h1>
+      <div ref={ganttContainer} style={{ height: '500px' }}></div>
+    </div>
+  );
+};
+
+export default GanttChartComponent;

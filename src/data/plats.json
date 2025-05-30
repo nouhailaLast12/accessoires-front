@@ -1,0 +1,60 @@
+{
+  "plats": [
+    {
+      "imgSrc": "strips5.jpg",
+      "name": "Strips 5 pcs",
+      "description": "Choisissez parmi la sauce \u00e0 l'ail, douce ou \u00e9pic\u00e9e. Pepsi 0.5L, Mirinda 0.5L et plus.",
+      "price": "11.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "strips10.jpg",
+      "name": "Strips 10 pcs",
+      "description": "Choisissez parmi la sauce \u00e0 l'ail, douce ou \u00e9pic\u00e9e. Pepsi 0.5L, Mirinda 0.5L et plus.",
+      "price": "21.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "strips15.jpg",
+      "name": "Strips 15 pcs",
+      "description": "Choisissez parmi la sauce \u00e0 l'ail, douce ou \u00e9pic\u00e9e. Pepsi 0.5L, Mirinda 0.5L et plus.",
+      "price": "30.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "strips30.jpg",
+      "name": "Strips 30 pcs",
+      "description": "Choisissez parmi la sauce \u00e0 l'ail, douce ou \u00e9pic\u00e9e. Pepsi 0.5L, Mirinda 0.5L et plus.",
+      "price": "54.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "wings5.jpg",
+      "name": "Ailes 5 pcs",
+      "description": "Choisissez parmi les sauces BBQ, \u00e9pic\u00e9e ou douce.",
+      "price": "15.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "wings10.jpg",
+      "name": "Ailes 10 pcs",
+      "description": "Choisissez parmi les sauces BBQ, \u00e9pic\u00e9e ou douce.",
+      "price": "28.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "kebab.jpg",
+      "name": "Crazy Kebab",
+      "description": "Kebab juteux dans du pain pita avec sauce \u00e0 l'ail, laitue et tomate.",
+      "price": "18.00",
+      "buttonText": "Commander"
+    },
+    {
+      "imgSrc": "mix.jpg",
+      "name": "Crazy Mix",
+      "description": "Mix de poulet, frites et salade avec vos sauces pr\u00e9f\u00e9r\u00e9es.",
+      "price": "25.00",
+      "buttonText": "Commander"
+    }
+  ]
+}
