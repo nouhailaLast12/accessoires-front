@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaTiktok,
-  FaShoppingBag,
-  FaChevronDown,
-  FaWhatsapp,
-} from "react-icons/fa";
-import { FiUser } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import styled, { keyframes, css } from "styled-components";
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import styled, { keyframes, css } from 'styled-components';
+import { 
+  FaShoppingCart, 
+  FaUser, 
+  FaSearch, 
+  FaTimes, 
+  FaBars,
+  FaMoon,
+  FaSun
+} from 'react-icons/fa';
+import { RiShoppingBag3Fill } from 'react-icons/ri';
 
 // Animations
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+const neonGlow = keyframes`
+  0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px ${props => props.theme.colors.primary}, 0 0 30px ${props => props.theme.colors.primary}; }
+  50% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px ${props => props.theme.colors.secondary}, 0 0 30px ${props => props.theme.colors.secondary}; }
 `;
 
-const pulse = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+const float3D = keyframes`
+  0% { transform: translateY(0px) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(10deg); }
+  100% { transform: translateY(0px) rotateX(0deg); }
 `;
 
 const gradientFlow = keyframes`
@@ -29,338 +30,346 @@ const gradientFlow = keyframes`
   100% { background-position: 0% 50%; }
 `;
 
-// Styled Components (Identique à ton original)
-const NavbarContainer = styled.nav`
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// Composants stylisés
+const NavContainer = styled.nav`
+  background: ${({ theme }) => theme.colors.navBackground};
+  backdrop-filter: ${({ $scrolled }) => ($scrolled ? 'blur(12px)' : 'blur(8px)')};
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: ${({ $scrolled }) => ($scrolled ? '0.5rem 0' : '1rem 0')};
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transform: translateY(${({ $hidden }) => ($hidden ? '-100%' : '0')});
+`;
+
+const NavWrapper = styled.div`
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 50px;
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-  animation: ${fadeIn} 0.5s ease-out;
-  transition: all 0.3s ease;
+  position: relative;
 
-  ${({ $scrolled }) =>
-    $scrolled &&
-    css`
-      padding: 10px 50px;
-      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    `}
+  @media (max-width: 992px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const Logo = styled(Link)`
-  font-family: "Playfair Display", serif;
-  font-size: 28px;
-  font-weight: 900;
-  background: linear-gradient(45deg, #8b4513, #daa520, #ffd700);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 1px;
   position: relative;
+  z-index: 1001;
 
-  &:hover {
-    letter-spacing: 4px;
-    background-position: right center;
-    animation: ${gradientFlow} 3s ease infinite;
-    text-shadow: 0 0 10px rgba(218, 165, 32, 0.4),
-      0 0 20px rgba(139, 69, 19, 0.3);
+  span {
+    background: ${({ theme }) => theme.colors.linkUnderline};
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: ${gradientFlow} ${({ theme }) => theme.animations.gradientFlow};
+    display: inline-block;
   }
 
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, #8b4513, #daa520, #ffd700);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.4s ease;
+  .logo-icon {
+    margin-right: 10px;
+    font-size: 1.5em;
   }
 
-  &:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
   }
 `;
 
-const Menu = styled.div`
+const NavMenu = styled.div`
   display: flex;
-  gap: 30px;
   align-items: center;
+
+  @media (max-width: 992px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: ${({ theme }) => theme.colors.navBackground};
+    flex-direction: column;
+    justify-content: center;
+    transform: ${({ $isOpen }) => ($isOpen ? 'translateY(0)' : 'translateY(-100%)')};
+    opacity: ${({ $isOpen }) => ($isOpen ? '1' : '0')};
+    pointer-events: ${({ $isOpen }) => ($isOpen ? 'all' : 'none')};
+    z-index: 1000;
+    transition: all 0.4s ease;
+  }
+`;
+
+const NavItem = styled.div`
+  margin-left: 2rem;
+  position: relative;
+
+  @media (max-width: 992px) {
+    margin: 1.5rem 0;
+    opacity: 0;
+    animation: ${fadeIn} 0.5s ease forwards;
+    animation-delay: ${({ $delay }) => $delay || '0s'};
+  }
 `;
 
 const NavLink = styled(Link)`
-  font-size: 16px;
-  color: #3e2723;
-  text-decoration: none;
+  font-size: 1.1rem;
   font-weight: 500;
-  cursor: pointer;
-  position: relative;
-  text-transform: uppercase;
+  color: ${({ theme, $isActive }) => 
+    $isActive ? theme.colors.primary : theme.colors.text};
+  text-decoration: none;
   transition: all 0.3s ease;
-  padding: 8px 0;
+  position: relative;
+  padding: 0.5rem 0;
 
-  &:hover {
-    color: #ffd54f;
-  }
-
-  &::before {
-    content: "";
+  &::after {
+    content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, #ffd54f, #3e2723);
-    transform: scaleX(0);
-    transform-origin: right;
+    background: ${({ theme }) => theme.colors.linkUnderline};
+    transform: scaleX(${({ $isActive }) => ($isActive ? '1' : '0')});
+    transform-origin: ${({ $isActive }) => ($isActive ? 'left' : 'right')};
     transition: transform 0.4s ease;
   }
 
-  &:hover::before {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-`;
-
-const Dropdown = styled.div`
-  position: relative;
-`;
-
-const DropdownContent = styled.div`
-  display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
-  position: absolute;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.15);
-  z-index: 1;
-  top: 100%;
-  left: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  animation: ${fadeIn} 0.3s ease-out;
-  pointer-events: ${({ $isOpen }) => ($isOpen ? "auto" : "none")};
-  transform-origin: top center;
-  transform: ${({ $isOpen }) => ($isOpen ? "scaleY(1)" : "scaleY(0.9)")};
-  opacity: ${({ $isOpen }) => ($isOpen ? "1" : "0")};
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-`;
-
-const DropdownLink = styled(Link)`
-  color: #3e2723;
-  padding: 15px 20px;
-  text-decoration: none;
-  display: block;
-  font-size: 14px;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-  border-left: 3px solid transparent;
-
   &:hover {
-    background-color: #fff9f0;
-    color: #ffd54f;
-    padding-left: 25px;
-    border-left: 3px solid #ffd54f;
+    color: ${({ theme }) => theme.colors.primary};
+  }
+
+  @media (max-width: 992px) {
+    font-size: 1.5rem;
+    padding: 0.5rem 1.5rem;
   }
 `;
 
-const Icon = styled(FaChevronDown)`
-  margin-left: 8px;
-  font-size: 12px;
-  transition: all 0.3s ease;
-  transform: ${({ $isOpen }) => ($isOpen ? "rotate(180deg)" : "rotate(0)")};
-`;
-
-const SocialIcon = styled.a`
-  color: #3e2723;
-  font-size: 20px;
-  transition: all 0.3s ease;
-  margin-left: 20px;
-  position: relative;
+const IconWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  gap: 1.5rem;
+  margin-left: 2rem;
 
-  &:hover {
-    color: #ffd54f;
-    transform: translateY(-3px);
-    background-color: rgba(62, 39, 35, 0.05);
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ffd54f;
-    border-radius: 50%;
-    transform: scale(0.8);
-    opacity: 0;
-    transition: all 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scale(1.1);
-    opacity: 1;
+  @media (max-width: 992px) {
+    margin-left: 0;
+    margin-top: 2rem;
   }
 `;
 
-const CartIcon = styled.div`
+const IconLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.iconColor};
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+  animation: ${float3D} ${({ theme }) => theme.animations.float3D};
+  animation-delay: ${({ $delay }) => $delay || '0s'};
 
   &:hover {
-    background-color: rgba(62, 39, 35, 0.05);
-    transform: translateY(-3px);
-
-    &::before {
-      transform: scale(1.1);
-      opacity: 1;
-    }
+    color: ${({ theme }) => theme.colors.iconHover};
+    transform: translateY(-5px);
   }
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 1px solid #ffd54f;
-    border-radius: 50%;
-    transform: scale(0.8);
-    opacity: 0;
-    transition: all 0.3s ease;
+  @media (max-width: 992px) {
+    font-size: 1.5rem;
   }
 `;
 
 const CartBadge = styled.span`
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: #ffd54f;
-  color: white;
+  top: -8px;
+  right: -10px;
+  background: ${({ theme }) => theme.colors.badgeBackground};
+  color: ${({ theme }) => theme.colors.badgeText};
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 0.7rem;
   font-weight: bold;
-  animation: ${pulse} 2s infinite;
 `;
 
-const Navbar = () => {
-  const [isBrandsOpen, setIsBrandsOpen] = useState(false);
+const MobileMenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1001;
+
+  @media (max-width: 992px) {
+    display: block;
+  }
+`;
+
+const SearchBar = styled.div`
+  position: relative;
+  margin-left: 2rem;
+
+  input {
+    padding: 0.7rem 1.5rem;
+    border-radius: 30px;
+    border: 1px solid ${({ theme }) => theme.colors.searchBorder};
+    background: ${({ theme }) => theme.colors.searchBackground};
+    color: ${({ theme }) => theme.colors.text};
+    transition: all 0.5s ease;
+    width: 200px;
+
+    &:focus {
+      outline: none;
+      width: 250px;
+      border-color: ${({ theme }) => theme.colors.searchFocus};
+    }
+  }
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+const ThemeToggle = styled.button`
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: all 0.5s ease;
+
+  &:hover {
+    transform: rotate(180deg) scale(1.2);
+  }
+`;
+
+const Navbar = ({ onThemeToggle, isDarkMode }) => {
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate();
-  const [cartItemsCount, setCartItemsCount] = useState(3); // Exemple
+  const [hidden, setHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartItems] = useState(3);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        setHidden(true);
       } else {
-        setScrolled(false);
+        setHidden(false);
       }
+      setLastScrollY(window.scrollY);
+      setScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
-  const handleScrollTo = (sectionId) => {
-    if (window.location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) element.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
 
   return (
-    <NavbarContainer $scrolled={scrolled}>
-      {/* Menu gauche */}
-      <Menu>
-        <NavLink to="/" onClick={() => handleScrollTo("home")}>Accueil</NavLink>
-        <NavLink to="/" onClick={() => handleScrollTo("shop")}>Boutique</NavLink>
-        <NavLink to="/" onClick={() => handleScrollTo("gifts")}>Cadeaux</NavLink>
-      </Menu>
+    <NavContainer $scrolled={scrolled} $hidden={hidden}>
+      <NavWrapper>
+        <Logo to="/">
+          <RiShoppingBag3Fill className="logo-icon" />
+          <span>FashionHub</span>
+        </Logo>
 
-      {/* Logo */}
-      <Logo to="/">Olive & Avery</Logo>
+        <MobileMenuButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <FaTimes /> : <FaBars />}
+        </MobileMenuButton>
 
-      {/* Menu droit */}
-      <Menu>
-        <NavLink to="/" onClick={() => handleScrollTo("about")}>À propos</NavLink>
-        <NavLink to="/" onClick={() => handleScrollTo("save")}>Favoris</NavLink>
-        <NavLink to="/" onClick={() => handleScrollTo("contact")}>Contact</NavLink>
+        <NavMenu $isOpen={isMenuOpen}>
+          <NavItem $delay="0.1s">
+            <NavLink 
+              to="/" 
+              $isActive={location.pathname === '/'}
+            >
+              Home
+            </NavLink>
+          </NavItem>
+          <NavItem $delay="0.2s">
+            <NavLink 
+              to="/shop" 
+              $isActive={location.pathname === '/shop'}
+            >
+              Shop
+            </NavLink>
+          </NavItem>
+          <NavItem $delay="0.3s">
+            <NavLink 
+              to="/cart" 
+              $isActive={location.pathname === '/cart'}
+            >
+              Cart
+            </NavLink>
+          </NavItem>
+          <NavItem $delay="0.4s">
+            <NavLink 
+              to="/about" 
+              $isActive={location.pathname === '/about'}
+            >
+              About
+            </NavLink>
+          </NavItem>
+          <NavItem $delay="0.5s">
+            <NavLink 
+              to="/contact" 
+              $isActive={location.pathname === '/contact'}
+            >
+              Contact
+            </NavLink>
+          </NavItem>
+           <NavItem $delay="0.5s">
+            <NavLink 
+              to="/ChekoutPage" 
+              $isActive={location.pathname === '/ChekoutPage'}
+            >
+              chekoutPage
+            </NavLink>
+          </NavItem>
 
-        {/* Dropdown marques */}
-        <Dropdown
-          onMouseEnter={() => setIsBrandsOpen(true)}
-          onMouseLeave={() => setTimeout(() => setIsBrandsOpen(false), 200)}
-        >
-          <NavLink to="#">
-            Marques <Icon $isOpen={isBrandsOpen} />
-          </NavLink>
-          <DropdownContent $isOpen={isBrandsOpen}>
-            <DropdownLink to="/brand/chanel">Chanel</DropdownLink>
-            <DropdownLink to="/brand/dior">Dior</DropdownLink>
-            <DropdownLink to="/brand/gucci">Gucci</DropdownLink>
-          </DropdownContent>
-        </Dropdown>
+          <SearchBar>
+            <input type="text" placeholder="Search products..." />
+          </SearchBar>
 
-        <NavLink to="/" onClick={() => handleScrollTo("faq")}>FAQ</NavLink>
-      </Menu>
-
-      {/* Réseaux sociaux + panier */}
-      <Menu>
-        <SocialIcon href="https://facebook.com" target="_blank" aria-label="Facebook">
-          <FaFacebook />
-        </SocialIcon>
-        <SocialIcon href="https://instagram.com" target="_blank" aria-label="Instagram">
-          <FaInstagram />
-        </SocialIcon>
-        <SocialIcon href="https://wa.me/yourphonenumber" target="_blank" aria-label="WhatsApp">
-          <FaWhatsapp />
-        </SocialIcon>
-        <NavLink to="/account"><FiUser /></NavLink>
-        <NavLink to="/cart">
-          <CartIcon>
-            <FaShoppingBag />
-            {cartItemsCount > 0 && <CartBadge>{cartItemsCount}</CartBadge>}
-          </CartIcon>
-        </NavLink>
-      </Menu>
-    </NavbarContainer>
+          <IconWrapper>
+            <IconLink to="/account" $delay="0s">
+              <FaUser />
+            </IconLink>
+            <IconLink to="/cart" $delay="0.2s">
+              <FaShoppingCart />
+              {cartItems > 0 && <CartBadge>{cartItems}</CartBadge>}
+            </IconLink>
+            <ThemeToggle onClick={onThemeToggle}>
+              {isDarkMode ? <FaSun /> : <FaMoon />}
+            </ThemeToggle>
+          </IconWrapper>
+        </NavMenu>
+      </NavWrapper>
+    </NavContainer>
   );
 };
 

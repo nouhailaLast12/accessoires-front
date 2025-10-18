@@ -1,163 +1,184 @@
+// src/pages/About.js
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { FaUsers, FaBullseye, FaHistory } from 'react-icons/fa';
 
 // Animations
-const move = keyframes`
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-`;
-
-const float = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
-`;
-
 const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(30px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-// Styles
+const float3D = keyframes`
+  0% { transform: translateY(0px) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(10deg); }
+  100% { transform: translateY(0px) rotateX(0deg); }
+`;
+
+// Composants stylisés
 const AboutContainer = styled.div`
-  text-align: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  padding: 120px 0 40px;
   min-height: 100vh;
-  padding: 100px 20px;
-  position: relative;
-  overflow: hidden;
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+    url('https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  color: #333;
 `;
 
-const Title = styled.h1`
-  font-size: 3.5rem;
-  color: #3e2723;
-  margin-bottom: 40px;
-  position: relative;
-  display: inline-block;
-  animation: ${fadeIn} 0.8s ease-out;
-  
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(to right, #ffd54f, #3e2723);
-    border-radius: 2px;
-  }
-`;
-
-const Subtitle = styled.p`
-  font-size: 1.2rem;
-  color: #666;
-  max-width: 700px;
-  margin: 0 auto 60px;
-  animation: ${fadeIn} 0.8s ease-out 0.2s both;
-`;
-
-const AccessoriesSection = styled.div`
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  margin-top: 50px;
-  padding: 30px 0;
-  
-  &::before, &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 100px;
-    height: 100%;
-    z-index: 2;
-  }
-  
-  &::before {
-    left: 0;
-    background: linear-gradient(to right, #f5f7fa, transparent);
-  }
-  
-  &::after {
-    right: 0;
-    background: linear-gradient(to left, #f5f7fa, transparent);
-  }
-`;
-
-const AccessoriesSlider = styled.div`
+const AboutHero = styled.section`
+  height: 200px;
   display: flex;
-  animation: ${move} 30s linear infinite;
-  width: 200%;
-`;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  animation: ${fadeIn} 0.8s ease-out;
 
-const AccessoryCard = styled.div`
-  margin: 0 15px;
-  animation: ${float} 4s ease-in-out infinite;
-  animation-delay: ${props => props.delay || '0s'};
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
+  h1 {
+    font-size: 3.5rem;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 3px;
+    font-weight: 700;
+    position: relative;
+    color: #333;
+    
+    &::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 4px;
+      background: #4a90e2;
+      margin: 20px auto 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.5rem;
+    }
   }
 `;
 
-const AccessoryImage = styled.img`
-  width: 280px;
-  height: 280px;
-  border-radius: 20px;
-  object-fit: cover;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  
-  ${AccessoryCard}:hover & {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    transform: rotate(-2deg);
+const AboutContent = styled.section`
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  gap: 40px;
+  animation: ${fadeIn} 1s ease-out;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 `;
 
-const AccessoryName = styled.h3`
-  margin-top: 15px;
-  font-size: 1.2rem;
-  color: #3e2723;
-  font-weight: 600;
+const AboutText = styled.div`
+  flex: 1;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+`;
+
+const AboutTitle = styled.h2`
+  margin-bottom: 25px;
+  font-size: 2rem;
+  color: #333;
+  font-family: 'Montserrat', sans-serif;
+  position: relative;
+  padding-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: #4a90e2;
+  }
+`;
+
+const AboutParagraph = styled.p`
+  margin-bottom: 20px;
+  line-height: 1.7;
+  color: #555;
+  font-size: 1.1rem;
+  animation: ${fadeIn} 0.5s ease forwards;
+  animation-delay: ${({ $delay }) => $delay || '0s'};
+`;
+
+const AboutImage = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+`;
+
+const AboutImg = styled.img`
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: ${float3D} 4s ease infinite;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 `;
 
 const About = () => {
-  const accessories = [
-    { id: 1, name: "Boucles d'oreilles", image: 'team1.jpg' },
-    { id: 2, name: "Collier élégant", image: 'team2.jpg' },
-    { id: 3, name: "Bracelet doré", image: 'team3.jpg' },
-    { id: 4, name: "Montre de luxe", image: 'team4.jpg' },
-    { id: 5, name: "Bague précieuse", image: 'team5.jpg' },
-    { id: 6, name: "Broche vintage", image: 'team6.jpg' }
-  ];
-
-  // Dupliquer les éléments pour l'animation infinie
-  const duplicatedAccessories = [...accessories, ...accessories];
-
   return (
-    <AboutContainer id="about">
-      <Title>Nos Créations Exclusives</Title>
-      <Subtitle>
-        Découvrez notre collection d'accessoires minutieusement conçus pour sublimer votre style
-      </Subtitle>
-
-      <AccessoriesSection>
-        <AccessoriesSlider>
-          {duplicatedAccessories.map((item, index) => (
-            <AccessoryCard 
-              key={`${item.id}-${index}`} 
-              delay={`${index * 0.2}s`}
-            >
-              <AccessoryImage 
-                src={`${process.env.PUBLIC_URL}/images/${item.image}`} 
-                alt={item.name}
-              />
-              <AccessoryName>{item.name}</AccessoryName>
-            </AccessoryCard>
-          ))}
-        </AccessoriesSlider>
-      </AccessoriesSection>
+    <AboutContainer>
+      <AboutHero>
+        <h1>About FashionHub</h1>
+      </AboutHero>
+      
+      <AboutContent>
+        <AboutText>
+          <AboutTitle>
+            <FaHistory /> Our Story
+          </AboutTitle>
+          <AboutParagraph $delay="0.1s">
+            Founded in 2023, FashionHub started as a small boutique with a big dream - to revolutionize 
+            the way people experience fashion. What began as a single storefront has blossomed into 
+            a leading online fashion destination, serving customers worldwide.
+          </AboutParagraph>
+          
+          <AboutTitle>
+            <FaBullseye /> Our Mission
+          </AboutTitle>
+          <AboutParagraph $delay="0.2s">
+            We're committed to making high-quality fashion accessible to everyone without compromising 
+            on style or sustainability. Our carefully curated collections are designed to empower 
+            individuals to express their unique personalities through clothing.
+          </AboutParagraph>
+          
+          <AboutTitle>
+            <FaUsers /> Our Team
+          </AboutTitle>
+          <AboutParagraph $delay="0.3s">
+            Our team consists of passionate fashion enthusiasts, trend spotters, and customer service 
+            experts who work tirelessly to bring you the latest styles from around the globe. We believe 
+            fashion should be fun, accessible, and sustainable.
+          </AboutParagraph>
+        </AboutText>
+        
+        <AboutImage>
+          <AboutImg 
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+            alt="Our team" 
+          />
+          <AboutImg 
+            src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+            alt="Our store" 
+          />
+        </AboutImage>
+      </AboutContent>
     </AboutContainer>
   );
 };

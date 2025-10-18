@@ -1,0 +1,135 @@
+.accessoire-list-horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 16px 8px 24px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-light) transparent;
+}
+
+.accessoire-list-horizontal::-webkit-scrollbar {
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.accessoire-list-horizontal::-webkit-scrollbar-thumb {
+  background: var(--gradient);
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+.accessoire-list-horizontal::-webkit-scrollbar-track {
+  background: rgba(255, 45, 117, 0.05);
+  border-radius: 10px;
+}
+
+.accessoire-card {
+  min-width: 280px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(255, 45, 117, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  border: 1px solid rgba(255, 45, 117, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.accessoire-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 45, 117, 0.15);
+}
+
+.accessoire-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient);
+}
+
+.accessoire-card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 45, 117, 0.03) 0%, rgba(255, 143, 171, 0.03) 100%);
+}
+
+.accessoire-card-title {
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.accessoire-card-price {
+  color: var(--primary-color);
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-top: auto;
+}
+
+.accessoire-card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--gradient);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 45, 117, 0.3);
+}
+
+.accessoire-card-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  gap: 8px;
+}
+
+.accessoire-card-button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.accessoire-card-button.primary {
+  background: var(--gradient);
+  color: white;
+}
+
+.accessoire-card-button.secondary {
+  background: rgba(255, 45, 117, 0.1);
+  color: var(--primary-color);
+}
+
+.accessoire-card-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 45, 117, 0.2);
+}
+
+@media (max-width: 768px) {
+  .accessoire-card {
+    min-width: 240px;
+  }
+  
+  .accessoire-card-image {
+    height: 150px;
+  }
+}

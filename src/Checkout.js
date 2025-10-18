@@ -1,19 +1,51 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components"; // Added css import here
 import { useNavigate } from "react-router-dom";
+
+// Animations
+const neonGlow = keyframes`
+  0%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073; }
+  50% { text-shadow: 0 0 5px #fff, 0 0 10px #ff4da6, 0 0 15px #ff4da6, 0 0 20px #ff4da6; }
+`;
+
+const float = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+`;
+
+const rainbow = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// Styled Components
 const CheckoutContainer = styled.div`
   max-width: 800px;
   margin: 2rem auto;
-  padding: 2.5rem;
-  background: rgba(255, 253, 245, 0.85);
+  padding: 3rem;
+  background: rgba(26, 26, 46, 0.85);
   backdrop-filter: blur(12px);
   border-radius: 24px;
   box-shadow: 
-    0 8px 32px rgba(31, 38, 135, 0.15),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+    0 8px 32px rgba(31, 38, 135, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   overflow: hidden;
   position: relative;
+  animation: ${fadeIn} 0.6s ease-out;
   
   &::before {
     content: '';
@@ -24,37 +56,40 @@ const CheckoutContainer = styled.div`
     height: 200%;
     background: radial-gradient(
       circle at 30% 50%,
-      rgba(255, 213, 79, 0.15) 0%,
+      rgba(77, 166, 255, 0.15) 0%,
       transparent 40%
     );
-    animation: float 12s infinite ease-in-out alternate;
+    animation: ${float} 12s infinite ease-in-out alternate;
     z-index: -1;
-  }
-
-  @keyframes float {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-5%, 5%) rotate(2deg); }
-    100% { transform: translate(5%, -5%) rotate(-2deg); }
   }
 `;
 
 const CheckoutTitle = styled.h2`
   text-align: center;
-  color: #4e342e;
-  margin-bottom: 2rem;
-  font-size: 2.2rem;
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #6d4c41, #d7ccc8, #6d4c41);
+  font-family: "Audiowide", cursive;
+  background: linear-gradient(45deg, #ff4da6, #ff9a3c, #ffec3d, #4dffb8, #4da6ff, #9d4dff);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  background-size: 300% 100%;
-  animation: gradientShift 8s ease infinite;
+  background-size: 400% 400%;
+  animation: ${rainbow} 15s ease infinite;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
   
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 4px;
+    background: linear-gradient(90deg, #ff4da6, #4da6ff);
+    border-radius: 2px;
   }
 `;
 
@@ -72,13 +107,13 @@ const Label = styled.label`
   display: block;
   margin-bottom: 0.8rem;
   font-weight: 600;
-  color: #5d4037;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  letter-spacing: 1px;
   transition: all 0.3s ease;
   
   ${FormGroup}:hover & {
-    color: #3e2723;
+    color: #fff;
     transform: translateX(3px);
   }
 `;
@@ -89,29 +124,31 @@ const Input = styled.input`
   border: none;
   border-radius: 12px;
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.05),
-    inset 0 0 0 1px rgba(109, 76, 65, 0.1);
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  backdrop-filter: blur(5px);
   
   &:focus {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
     box-shadow:
-      0 4px 12px rgba(255, 213, 79, 0.3),
-      inset 0 0 0 1px rgba(255, 213, 79, 0.5);
+      0 4px 12px rgba(77, 166, 255, 0.3),
+      inset 0 0 0 1px rgba(77, 166, 255, 0.5);
     transform: scale(1.02);
     outline: none;
   }
   
   &::placeholder {
-    color: #bcaaa4;
-    opacity: 0.7;
+    color: rgba(255, 255, 255, 0.5);
   }
 `;
 
 const SubmitButton = styled.button`
-  background: linear-gradient(135deg, #6d4c41 0%, #3e2723 100%);
+  background: linear-gradient(135deg, #ff4da6 0%, #4da6ff 100%);
+  background-size: 200% auto;
   color: white;
   border: none;
   padding: 1.3rem;
@@ -125,15 +162,19 @@ const SubmitButton = styled.button`
   position: relative;
   overflow: hidden;
   box-shadow:
-    0 6px 12px rgba(109, 76, 65, 0.2),
+    0 6px 12px rgba(77, 166, 255, 0.2),
     0 3px 6px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "Rajdhani", sans-serif;
+  animation: ${pulse} 3s infinite;
   
   &:hover {
     transform: translateY(-3px) scale(1.01);
     box-shadow:
-      0 12px 24px rgba(109, 76, 65, 0.3),
+      0 12px 24px rgba(77, 166, 255, 0.3),
       0 6px 12px rgba(0, 0, 0, 0.15);
-    background: linear-gradient(135deg, #5d4037 0%, #2e201b 100%);
+    background-position: right center;
   }
   
   &:active {
@@ -143,29 +184,28 @@ const SubmitButton = styled.button`
   &::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
-      to bottom right,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0) 60%
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
     );
-    transform: rotate(30deg);
     transition: all 0.7s ease;
   }
   
   &:hover::after {
     left: 100%;
-    top: 100%;
   }
 `;
 
 const BackButton = styled.button`
-  background: transparent;
-  color: #6d4c41;
-  border: 2px solid #d7ccc8;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.9rem 1.8rem;
   border-radius: 12px;
   margin-top: 1.5rem;
@@ -180,6 +220,7 @@ const BackButton = styled.button`
   backdrop-filter: blur(5px);
   position: relative;
   overflow: hidden;
+  width: 100%;
   
   &::before {
     content: '';
@@ -188,66 +229,53 @@ const BackButton = styled.button`
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(215, 204, 200, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     transform: translateX(-100%);
     transition: 0.6s;
   }
   
   &:hover {
-    border-color: #bcaaa4;
-    color: #4e342e;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     
     &::before {
       transform: translateX(100%);
     }
   }
-  
-  svg {
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover svg {
-    transform: translateX(-3px);
-  }
 `;
 
-// Ajout d'un composant de carte de crédit animé
-const CreditCardVisual = styled.div`
-  height: 180px;
-  background: linear-gradient(135deg, #5d4037 0%, #3e2723 100%);
-  border-radius: 16px;
-  padding: 1.5rem;
+const PaymentMethod = styled.div`
+  display: flex;
+  gap: 20px;
   margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  transition: transform 0.6s ease;
-  box-shadow: 0 10px 30px rgba(61, 39, 35, 0.3);
+`;
+
+const PaymentOption = styled.label`
+  flex: 1;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  
+  input[type="radio"] {
+    display: none;
+  }
+  
+  ${props => props.$isSelected && css`
+    background: rgba(77, 166, 255, 0.2);
+    border-color: rgba(77, 166, 255, 0.5);
+    box-shadow: 0 0 15px rgba(77, 166, 255, 0.3);
+  `}
   
   &:hover {
-    transform: rotateY(10deg) rotateX(5deg);
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle at center,
-      rgba(255, 255, 255, 0.2) 0%,
-      transparent 50%
-    );
-    animation: rotate 15s infinite linear;
-  }
-  
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -284,26 +312,24 @@ const Checkout = () => {
         body: JSON.stringify({
           customer_name: formData.firstName + ' ' + formData.lastName,
           customer_email: formData.email,
-          customer_phone: formData.phone, // إضافة إذا كانت موجودة
           customer_address: formData.address,
           payment_method: formData.paymentMethod,
-          items: JSON.parse(localStorage.getItem('cart')) // الحصول على المنتجات من السلة
+          items: JSON.parse(localStorage.getItem('cart'))
         }),
       });
   
       if (response.ok) {
         const orderData = await response.json();
-        alert("تم تأكيد الطلب!");
+        alert("Commande confirmée avec succès!");
         localStorage.removeItem('cart');
         navigate(`/order-confirmation/${orderData.id}`);
       } else {
-        alert("فشل في تأكيد الطلب، حاول مرة أخرى.");
+        alert("Erreur lors de la confirmation de la commande");
       }
     } catch (error) {
-      alert("حدث خطأ غير متوقع.");
+      alert("Une erreur s'est produite");
     }
   };
-  
 
   return (
     <CheckoutContainer>
@@ -318,6 +344,7 @@ const Checkout = () => {
             value={formData.firstName} 
             onChange={handleChange} 
             required 
+            placeholder="Votre prénom"
           />
         </FormGroup>
 
@@ -329,6 +356,7 @@ const Checkout = () => {
             value={formData.lastName} 
             onChange={handleChange} 
             required 
+            placeholder="Votre nom"
           />
         </FormGroup>
 
@@ -340,6 +368,7 @@ const Checkout = () => {
             value={formData.email} 
             onChange={handleChange} 
             required 
+            placeholder="email@exemple.com"
           />
         </FormGroup>
 
@@ -351,6 +380,7 @@ const Checkout = () => {
             value={formData.address} 
             onChange={handleChange} 
             required 
+            placeholder="Adresse complète"
           />
         </FormGroup>
 
@@ -363,6 +393,7 @@ const Checkout = () => {
               value={formData.city} 
               onChange={handleChange} 
               required 
+              placeholder="Votre ville"
             />
           </FormGroup>
 
@@ -374,6 +405,7 @@ const Checkout = () => {
               value={formData.postalCode} 
               onChange={handleChange} 
               required 
+              placeholder="Code postal"
             />
           </FormGroup>
         </div>
@@ -386,31 +418,34 @@ const Checkout = () => {
             value={formData.country} 
             onChange={handleChange} 
             required 
+            placeholder="Votre pays"
           />
         </FormGroup>
 
         <FormGroup>
           <Label>Méthode de paiement</Label>
-          <div>
-            <label>
+          <PaymentMethod>
+            <PaymentOption $isSelected={formData.paymentMethod === "creditCard"}>
               <input
                 type="radio"
                 name="paymentMethod"
                 value="creditCard"
                 checked={formData.paymentMethod === "creditCard"}
                 onChange={handleChange}
-              /> Carte de crédit
-            </label>
-            <label style={{ marginLeft: '20px' }}>
+              />
+              Carte de crédit
+            </PaymentOption>
+            <PaymentOption $isSelected={formData.paymentMethod === "paypal"}>
               <input
                 type="radio"
                 name="paymentMethod"
                 value="paypal"
                 checked={formData.paymentMethod === "paypal"}
                 onChange={handleChange}
-              /> PayPal
-            </label>
-          </div>
+              />
+              PayPal
+            </PaymentOption>
+          </PaymentMethod>
         </FormGroup>
 
         <SubmitButton type="submit">Confirmer la commande</SubmitButton>
